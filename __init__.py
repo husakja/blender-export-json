@@ -19,83 +19,21 @@ import importlib;
 if 'bpy' in locals():
  	from . import Export
  	importlib.reload(Export)
+ 	from . import Save
+ 	importlib.reload(Save)
+ 	from . import Base
+ 	importlib.reload(Base)
 
 # ExportJSON - main class
-class ExportJSON(Operator, ExportHelper):
+class ExportJSON(bpy.types.Operator, ExportHelper, Base.Base):
 	'''Export selected objects to JSON'''   # tooltip for menu items and buttons
-	bl_idname = 'export.json'               # unique identifier
-	bl_label = 'Export JSON'                # display name in the interface
+	bl_idname = 'export.json'			   # unique identifier
+	bl_label = 'Export JSON'				# display name in the interface
 	bl_options = {'REGISTER'}
 
-	separate_files = BoolProperty(
-		name = 'Separate Files',
-		description = 'Export data into separate files for selected objects',
-		default = True,
-	)
-
-	# TODO - does not have a menaning till other options to export arive
-	# export_meshes = BoolProperty(
-	# 	name = 'Export Meshes',
-	# 	description = 'Export meshes for selected objects',
-	# 	default = True,
-	# )
-
-	has_shells = BoolProperty(
-		name = 'Split mesh by material',
-		description = 'Split mesh into shells by its materials',
-		default = True,
-	)
-
-	export_normals = BoolProperty(
-		name = 'Export normals',
-		description = '',
-		default = True,
-	)
-
-	export_uvs = BoolProperty(
-		name = 'Export texture coordinates',
-		description = '',
-		default = True,
-	)
-
-	export_animation = BoolProperty(
-		name = 'Export animation',
-		description = 'Export animation for each mesh',
-		default = True,
-	)
-
-	export_shape_keys = BoolProperty(
-		name = 'Export shape keys',
-		description = '',
-		default = True,
-	)
-
-	pretty_print = BoolProperty(
-		name = 'Print pretty JSON',
-		description = 'Adds indentation and spaces to JSON files',
-		default = True,
-	)
-
-	exp_round = IntProperty(
-		name = 'Round to digits',
-		description = 'Return the floating point values rounded to N digits',
-		default = 3,
-	)
-
 	filename_ext = '.json'
-
-	filter_glob = StringProperty(
-		default = '.',
-		options = {'HIDDEN'},
-		maxlen = 255,
-		subtype = 'DIR_PATH'
-	)
-
-	# entry point class
-	def execute(self, context):
-		from .Export import Export
-		Export(self, self.filepath, context)
-		return {'FINISHED'}
+	filter_glob = StringProperty(default='*.json', options={'HIDDEN'})
+	export_format = 'ASCII'
 
 # menu registration
 def menu_func(self, context):

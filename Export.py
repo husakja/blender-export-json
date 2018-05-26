@@ -1,6 +1,5 @@
 import bpy
-import json
-from pprint import pprint
+from .Save import Save
 
 class Export:
 
@@ -14,7 +13,7 @@ class Export:
 		try:
 			# do export
 			meshes = self.MeshesFromSelected()
-			self.ExportAsJsons(meshes, filePath)
+			Save(operator, meshes, filePath)
 		finally:
 			# reset active object
 			bpy.context.scene.objects.active = activeObject
@@ -173,25 +172,3 @@ class Export:
 					meshes[objName] = self.ParseMesh(object)
 
 		return meshes
-
-	# JSON export
-	def WriteJSON(self, file, data):
-		# set from export UI
-		if (self.operator.pretty_print):
-			file.write(json.dumps(data, indent=2, separators=(',', ': '), sort_keys=True))
-		else:
-			file.write(json.dumps(data, separators=(',',':'), sort_keys=True))
-
-
-	# save meshes in JSON format
-	def ExportAsJsons(self, meshes, filePath):
-		# set from export UI
-		if(self.operator.separate_files):
-			folderPath = filePath.rsplit('\\', 1)[0]
-			for mesh in meshes:
-				path = folderPath + '\\' + mesh.lower().replace(' ', '-') + '.json'
-				with open(path, mode='w') as file:
-					self.WriteJSON(file, meshes[mesh])
-		else:
-			with open(filePath, mode='w') as file:
-				self.WriteJSON(file, meshes)
